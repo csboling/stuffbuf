@@ -9,7 +9,7 @@ class Writer(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def write(self, source, outf, *args, **kwargs):
+    def write(self, source, target, *args, **kwargs):
         pass
 
     @classmethod

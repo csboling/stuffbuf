@@ -18,7 +18,7 @@ class PngWriter(Writer):
             h *= 2
         return (w, h)
 
-    def write(self, source, outf, color=False):
+    def write(self, source, target, color=False):
         buf = source.read()
         print()
 
@@ -38,4 +38,4 @@ class PngWriter(Writer):
             print('{} byte bitmap'.format(len(buf)))
 
             im = Image.frombuffer(mode, (w, h), buf, 'raw', mode, 0, 1)
-            im.save(outf, 'PNG')
+            im.save(target, 'PNG')
