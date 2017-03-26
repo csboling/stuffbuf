@@ -50,7 +50,7 @@ class PngWriter(Writer):
         while w > h + 1:
             w //= 2
             h *= 2
-            return (w, h)
+        return (w, h)
 
     def write(self, outf, color=False):
         buf = stdin.buffer.read()
