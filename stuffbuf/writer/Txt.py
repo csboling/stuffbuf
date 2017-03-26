@@ -7,6 +7,6 @@ class TxtWriter(Writer):
     def fmt(cls):
         return 'txt'
 
-    def write(self, source, out):
+    def write(self, source, out, encoding='utf-8'):
         with open(out, 'w') as f:
-            f.write(source.read())
+            f.write(source.read().decode(encoding))
