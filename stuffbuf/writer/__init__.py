@@ -4,6 +4,7 @@ from stuffbuf.writer.Map import MapWriter, ReduceWriter
 from stuffbuf.writer.Png import PngWriter
 from stuffbuf.writer.Txt import TxtWriter
 from stuffbuf.writer.Wav import WavWriter
+from stuffbuf.writer.DSP import ConvolveWriter
 
 __all__ = [
     Writer,
@@ -13,4 +14,5 @@ __all__ = [
     WavWriter,
     MapWriter,
     ReduceWriter,
+    ConvolveWriter,
 ]
