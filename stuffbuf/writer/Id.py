@@ -7,6 +7,5 @@ class IdWriter(Writer):
     def fmt(cls):
         return 'id'
 
-    def write(self, source, outf):
-        with open(outf, 'wb') as f:
-            f.write(source.read())
+    def write(self, source, target):
+        target.write(source.read())

@@ -20,8 +20,6 @@ class PngWriter(Writer):
 
     def write(self, source, target, color=False):
         buf = source.read()
-        print()
-
         count = len(buf)
         print('{} bytes'.format(count))
 
@@ -31,11 +29,11 @@ class PngWriter(Writer):
         else:
             mode = 'L'
 
-            w, h = self.get_dims(count)
-            print('{} by {}'.format(w, h))
-            bytecount = w * h * (3 if color else 1)
-            buf = buf[:bytecount]
-            print('{} byte bitmap'.format(len(buf)))
+        w, h = self.get_dims(count)
+        print('{} by {}'.format(w, h))
+        bytecount = w * h * (3 if color else 1)
+        buf = buf[:bytecount]
+        print('{} byte bitmap'.format(len(buf)))
 
-            im = Image.frombuffer(mode, (w, h), buf, 'raw', mode, 0, 1)
-            im.save(target, 'PNG')
+        im = Image.frombuffer(mode, (w, h), buf, 'raw', mode, 0, 1)
+        im.save(target, 'PNG')
