@@ -9,7 +9,6 @@ class Writer(metaclass=ABCMeta):
     def fmt(cls):
         pass
 
-    @abstractmethod
     def write(self, source, target, *args, **kwargs):
         pass
 
