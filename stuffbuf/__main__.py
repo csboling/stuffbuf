@@ -1,7 +1,3 @@
-# usage:
-# head -c 44100 /dev/urandom | python3 stuffbuf.py png output.png [color]
-# heac -c 44100 /dev/urandom | python3 stuffbuf.py wav output.wav
-
 from abc import ABCMeta, abstractmethod
 from io import BytesIO
 from sys import stdin, argv
