@@ -1,5 +1,6 @@
 from stuffbuf.writer.Writer import Writer
 from stuffbuf.writer.Id import IdWriter
+from stuffbuf.writer.Map import MapWriter
 from stuffbuf.writer.Png import PngWriter
 from stuffbuf.writer.Txt import TxtWriter
 from stuffbuf.writer.Wav import WavWriter
@@ -10,4 +11,5 @@ __all__ = [
     PngWriter,
     TxtWriter,
     WavWriter,
+    MapWriter,
 ]
