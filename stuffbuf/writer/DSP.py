@@ -1,3 +1,5 @@
+import logging
+
 import numpy as np
 from scipy.signal import convolve
 
@@ -18,6 +20,6 @@ class ConvolveWriter(Writer):
         return bytes(map(int, 255 * y / max(y)))
 
     def write(self, source, target, kernel_f):
-        print('open: {}'.format(kernel_f))
+        logging.info('open: {}'.format(kernel_f))
         with open(kernel_f, 'rb') as kernel:
             target.write(self.convolve(kernel.read(), source.read()))

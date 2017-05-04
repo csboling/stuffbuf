@@ -1,3 +1,5 @@
+import logging
+
 from abc import ABCMeta, abstractmethod
 from io import BytesIO
 
@@ -25,7 +27,7 @@ class Writer(metaclass=ABCMeta):
         try:
             impl = next(k for k in cls.__subclasses__() if k.fmt() == fmt)
         except StopIteration:
-            print(
+            logging.warning(
                 "didn't recognize format '{}', "
                 "falling back to binary output".format(fmt)
             )
@@ -42,7 +44,7 @@ class Writer(metaclass=ABCMeta):
             def write(self, source, target):
                 buf = BytesIO()
                 left.write(source, buf)
-                print('-> {}'.format(right.fmt()))
+                logging.info('-> {}'.format(right.fmt()))
                 buf.seek(0)
                 right.write(buf, target)
 

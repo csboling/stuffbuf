@@ -1,0 +1,11 @@
+version: '3'
+services:
+  stuffbuf:
+    container_name: stuffbuf
+    build: .
+    ports:
+      - "${PORT}:${PORT}"
+    volumes:
+      - .:/src
+    environment:
+      PIPELINE: 'png'

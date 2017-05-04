@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from functools import reduce
 from io import BytesIO
+import logging
 
 from stuffbuf.writer.Writer import Writer
 from stuffbuf import xform
@@ -20,7 +21,7 @@ class CombinatorWriter:
         action = getattr(xform, func_name, identity)
         f = action(*args)
         buf = bytes(self.combinator(f, source.read(), *self.args))
-        print('writing {} bytes'.format(len(buf)))
+        logging.info('writing {} bytes'.format(len(buf)))
         target.write(buf)
 
 
