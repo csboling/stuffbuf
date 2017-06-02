@@ -22,6 +22,6 @@ Stuffbuf as a Service:
 
 ``` bash
 docker-compose up -d
-HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}} stuffbuf)
+HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' stuffbuf)
 cat input | nc $HOST 51966
 ```
