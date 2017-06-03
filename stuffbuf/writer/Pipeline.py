@@ -7,11 +7,15 @@ import stuffbuf.writer as writer
 class Pipeline:
 
     def __init__(self, src):
-        self.writer = reduce(
-            operator.__or__,
-            map(self.parse, src.split('|')),
-            writer.IdWriter()
-        )
+        stages = list(map(self.parse, src.split('|')))
+
+        self.source = False
+        if len(stages):
+            if isinstance(stages[0], writer.Source):
+                self.source = True
+            self.writer = reduce(operator.__or__, stages)
+        else:
+            self.writer = writer.IdWriter()
 
     def parse(self, stage):
         writer_type, *args = stage.split()

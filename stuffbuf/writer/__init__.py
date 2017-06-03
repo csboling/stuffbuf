@@ -5,6 +5,9 @@ from stuffbuf.writer.Png import PngWriter
 from stuffbuf.writer.Txt import TxtWriter
 from stuffbuf.writer.Wav import WavWriter
 
+from stuffbuf.writer.Source import Source
+from stuffbuf.writer.LFSR import LFSR
+
 try:
     from stuffbuf.writer.DSP import ConvolveWriter
 except ImportError:
@@ -19,4 +22,7 @@ __all__ = [
     MapWriter,
     ReduceWriter,
     ConvolveWriter,
+
+    Source,
+    LFSR,
 ]

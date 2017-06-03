@@ -13,4 +13,9 @@ if __name__ == '__main__':
     else:
         outf = stdout.buffer
 
-    pipeline.write(stdin.buffer, outf)
+    if pipeline.source:
+        inf = None
+    else:
+        inf = stdin.buffer
+
+    pipeline.write(inf, outf)

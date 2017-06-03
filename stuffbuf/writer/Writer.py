@@ -3,6 +3,12 @@ import logging
 from abc import ABCMeta, abstractmethod
 from io import BytesIO
 
+def all_subclasses(cls):
+    return cls.__subclasses__() + [
+        g for s in cls.__subclasses__()
+            for g in all_subclasses(s)
+    ]
+
 
 class Writer(metaclass=ABCMeta):
 
@@ -11,6 +17,7 @@ class Writer(metaclass=ABCMeta):
     def fmt(cls):
         pass
 
+    @abstractmethod
     def write(self, source, target, *args, **kwargs):
         pass
 
@@ -18,14 +25,24 @@ class Writer(metaclass=ABCMeta):
         bound = self.write
 
         def write(source, target):
-            bound(source, target, *args)
+            bound(source, target, **self.parse_args(args))
         self.write = write
+
+    def parse_args(self, args):
+        ret = dict()
+        for arg in args:
+            car, *cdr = arg.split('=')
+            if len(cdr):
+                ret[car] = cdr[0]
+            else:
+                ret[car] = True
+        return ret
 
     @classmethod
     def create(cls, fmt):
         from stuffbuf.writer.Id import IdWriter
         try:
-            impl = next(k for k in cls.__subclasses__() if k.fmt() == fmt)
+            impl = next(k for k in all_subclasses(cls) if k.fmt() == fmt)
         except StopIteration:
             logging.warning(
                 "didn't recognize format '{}', "
