@@ -85,4 +85,6 @@ class LFSR(FSR):
         coeffs = cls.taps_to_coeffs(taps)
         return Poly.from_list(
             coeffs, x, domain=GF(2)
+        ) + Poly.from_list(
+            [1], x, domain=GF(2)
         )
