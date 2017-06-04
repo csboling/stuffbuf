@@ -11,6 +11,12 @@ Some converters take options:
 cat input | python3 -m stuffbuf 'png color' output.png
 ```
 
+Some converters are sources and do not require an input file if they
+are at the beginning of a pipeline:
+
+``` bash
+python3 -m stuffbuf 'lfsr taps=0x123456 | png color' output.png
+```
 
 You can also sequence conversions together:
 
