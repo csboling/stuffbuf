@@ -16,6 +16,7 @@ class LFSRSession(FSRSession):
 
     def __init__(self, taps, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        print(taps)
         self.tap_mask = reduce(operator.or_, map(lambda b: 1 << (b - 1), taps))
         logging.info('taps: {} == 0x{:x}'.format(taps, self.tap_mask))
 
@@ -39,7 +40,7 @@ class LFSR(FSR):
     def parse_args(self, args):
         args_dict = Writer.parse_args(self, args)
         fsr_args = super().parse_args(args)
-        taps = self.parse_taps(args_dict.get('taps', '16,15,13,14'))
+        taps = self.parse_taps(args_dict.get('taps', '15,14,13,12'))
         return dict(
             taps=taps,
             **fsr_args
@@ -60,6 +61,7 @@ class LFSR(FSR):
                     self.feedback_poly(taps)
                 ))
                 return sorted(taps, reverse=True)
+        raise TapParsingError('Failed to parse taps input.')
 
     @staticmethod
     def coeffs_to_taps(coeffs):
@@ -83,6 +85,4 @@ class LFSR(FSR):
         coeffs = cls.taps_to_coeffs(taps)
         return Poly.from_list(
             coeffs, x, domain=GF(2)
-        ) + Poly.from_list(
-            [1], x, domain=GF(2)
         )

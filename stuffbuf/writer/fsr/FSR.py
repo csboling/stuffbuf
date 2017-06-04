@@ -10,10 +10,11 @@ class FSRSession(metaclass=ABCMeta):
         self.limit = limit
 
     def done(self, prev, new):
-        return any([
-            new == self.init,
-            new == prev,
-        ])
+        return False
+        # return any([
+        #     new == self.init,
+        #     new == prev,
+        # ])
 
     @abstractmethod
     def feedback(self, reg):
