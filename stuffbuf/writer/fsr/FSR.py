@@ -19,17 +19,33 @@ class FSRSession(metaclass=ABCMeta):
     def feedback(self, reg):
         pass
 
+    def step(self, reg):
+        return ((reg << 1) | self.feedback(reg)) & self.mod_mask
+
     def run(self):
         reg = self.init
         for _ in range(self.limit):
             yield (reg & self.mod_mask).to_bytes(
                 self.bytedepth, byteorder='big'
             )
-            new_reg = ((reg << 1) | self.feedback(reg)) & self.mod_mask
+            new_reg = self.step(reg)
             if self.done(reg, new_reg):
                 break
             else:
                 reg = new_reg
+
+
+class InvertibleFSRSession(FSRSession):
+
+    @abstractmethod
+    def inverse(self, reg):
+        pass
+
+    def unstep(self, reg):
+        return (
+            (reg >> 1) |
+            (self.inverse(reg) << 8 * self.bytedepth)
+        ) & self.mod_mask
 
 
 class FSR(Source):

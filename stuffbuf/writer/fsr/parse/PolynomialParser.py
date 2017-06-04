@@ -15,9 +15,9 @@ class PolynomialParser(TapParser):
         except SyntaxError:
             raise TapParsingError
         else:
+            logging.info('ℤ: {}'.format(poly))
             self.screen_polys(poly, meta)
             gf_poly = gf_from_int_poly(poly.coeffs(), 2)
-            logging.info('GF(2) coefficients: {}'.format(gf_poly))
             return self.coeffs_to_taps(gf_poly)
 
     @staticmethod

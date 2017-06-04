@@ -3,6 +3,10 @@ import logging
 import math
 import operator
 
+from sympy.abc import x
+from sympy.polys import Poly
+from sympy.polys.domains import GF
+
 from stuffbuf.writer import Writer
 from stuffbuf.writer.fsr.FSR import FSR, FSRSession
 from stuffbuf.writer.fsr.parse import parsers, TapParsingError
@@ -52,4 +56,29 @@ class LFSR(FSR):
             except TapParsingError:
                 continue
             else:
+                logging.info('GF(2): {}'.format(
+                    self.feedback_poly(taps)
+                ))
                 return sorted(taps, reverse=True)
+
+    @staticmethod
+    def coeffs_to_taps(coeffs):
+        taps = []
+        poly_order = len(coeffs) - coeffs.index(1)
+        for i, b in enumerate(coeffs):
+            if b == 1:
+                taps.append(poly_order - i)
+        return taps
+
+    @staticmethod
+    def taps_to_coeffs(taps):
+        order = max(taps)
+        coeffs = [0] * (order + 1)
+        for tap in taps:
+            coeffs[-(tap + 1)] = 1
+        return coeffs
+
+    @classmethod
+    def feedback_poly(cls, taps):
+        coeffs = cls.taps_to_coeffs(taps)
+        return Poly.from_list(coeffs, x, domain=GF(2))
