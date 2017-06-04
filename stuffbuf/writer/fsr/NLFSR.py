@@ -39,10 +39,10 @@ class NLFSR(FSR):
     def parse_feedback(self, s):
         logging.info('feedback formula: {}'.format(s))
         exp = ast.parse(s, mode='eval')
+        self.order = 0
         return self.eval(exp.body)
 
     def eval(self, exp):
-        self.order = 0
         if isinstance(exp, ast.Num):
             self.order = max(self.order, exp.n)
             return lambda bits: self.get_bit(bits, exp.n)
