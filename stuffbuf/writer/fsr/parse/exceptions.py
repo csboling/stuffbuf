@@ -1,0 +1,2 @@
+class TapParsingError(Exception):
+    pass
