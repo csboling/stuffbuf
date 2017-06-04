@@ -1,7 +1,6 @@
 import logging
 
-from sympy.polys.polytools import poly_from_expr
-from sympy.polys.galoistools import gf_from_int_poly
+from sympy.polys.polytools import poly_from_expr, trunc
 
 from stuffbuf.writer.fsr.parse.TapParser import TapParser
 from stuffbuf.writer.fsr.parse.exceptions import TapParsingError
@@ -15,10 +14,10 @@ class PolynomialParser(TapParser):
         except SyntaxError:
             raise TapParsingError
         else:
-            logging.info('ℤ: {}'.format(poly))
-            self.screen_polys(poly, meta)
-            gf_poly = gf_from_int_poly(poly.coeffs(), 2)
-            return self.coeffs_to_taps(gf_poly)
+            gf = trunc(poly, 2)
+            logging.info('input poly [ℤ]: {}'.format(poly))
+            logging.info('input poly [truncated]: {}'.format(gf))
+            return self.coeffs_to_taps(gf.all_coeffs())
 
     @staticmethod
     def screen_polys(poly, meta):

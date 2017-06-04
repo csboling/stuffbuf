@@ -52,11 +52,11 @@ class LFSR(FSR):
         for parser_t in parsers:
             parser = parser_t()
             try:
-                taps = parser.parse(s)
+                taps = list(parser.parse(s))
             except TapParsingError:
                 continue
             else:
-                logging.info('GF(2): {}'.format(
+                logging.info('feedback poly: {}'.format(
                     self.feedback_poly(taps)
                 ))
                 return sorted(taps, reverse=True)
@@ -81,4 +81,8 @@ class LFSR(FSR):
     @classmethod
     def feedback_poly(cls, taps):
         coeffs = cls.taps_to_coeffs(taps)
-        return Poly.from_list(coeffs, x, domain=GF(2))
+        return Poly.from_list(
+            coeffs, x, domain=GF(2)
+        ) + Poly.from_list(
+            [1], x, domain=GF(2)
+        )
