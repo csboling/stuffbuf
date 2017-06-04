@@ -1,0 +1,2 @@
+class UnknownFeedbackOperator(Exception):
+    pass
