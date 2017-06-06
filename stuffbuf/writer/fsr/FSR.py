@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+import logging
 
 from stuffbuf.writer.Source import Source
 
@@ -8,20 +9,14 @@ class FSRSession(metaclass=ABCMeta):
     def __init__(self, init, limit):
         self.init = init
         self.limit = limit
+        logging.info('init: 0x{:x}'.format(init))
 
     def done(self, prev, new):
         return False
-        # return any([
-        #     new == self.init,
-        #     new == prev,
-        # ])
 
     @abstractmethod
-    def feedback(self, reg):
-        pass
-
     def step(self, reg):
-        return ((reg << 1) | self.feedback(reg)) & self.mod_mask
+        pass
 
     def run(self):
         reg = self.init
@@ -59,7 +54,7 @@ class FSR(Source):
         )
 
     @abstractmethod
-    def create_session(self, *args, **kwargs):
+    def create_session(self, *args, **kwargs) -> FSRSession:
         pass
 
     def generate(self, *args, **kwargs):

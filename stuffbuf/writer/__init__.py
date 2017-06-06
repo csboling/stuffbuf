@@ -6,7 +6,7 @@ from stuffbuf.writer.Txt import TxtWriter
 from stuffbuf.writer.Wav import WavWriter
 
 from stuffbuf.writer.Source import Source
-from stuffbuf.writer.fsr import LFSR, NLFSR
+from stuffbuf.writer.fsr import LFSR, NLFSR, ASG
 
 try:
     from stuffbuf.writer.DSP import ConvolveWriter
@@ -26,4 +26,5 @@ __all__ = [
     Source,
     LFSR,
     NLFSR,
+    ASG,
 ]

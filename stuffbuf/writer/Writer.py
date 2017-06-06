@@ -3,10 +3,11 @@ import logging
 from abc import ABCMeta, abstractmethod
 from io import BytesIO
 
+
 def all_subclasses(cls):
     return cls.__subclasses__() + [
         g for s in cls.__subclasses__()
-            for g in all_subclasses(s)
+        for g in all_subclasses(s)
     ]
 
 
@@ -28,7 +29,8 @@ class Writer(metaclass=ABCMeta):
             bound(source, target, **self.parse_args(args))
         self.write = write
 
-    def parse_args(self, args):
+    @classmethod
+    def parse_args(cls, args):
         ret = dict()
         for arg in args:
             car, *cdr = arg.split('=')

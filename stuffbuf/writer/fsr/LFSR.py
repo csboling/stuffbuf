@@ -23,6 +23,12 @@ class LFSRSession(FSRSession):
         self.bytedepth = int(math.ceil(taps[0] / 8))
         self.mod_mask = (1 << max(taps)) - 1
 
+    def done(self, prev, new):
+        return False
+
+    def step(self, reg):
+        return ((reg << 1) | self.feedback(reg)) & self.mod_mask
+
     def feedback(self, reg):
         tapped_bits = map(int, bin(reg & self.tap_mask)[2:])
         return reduce(
@@ -38,7 +44,7 @@ class LFSR(FSR):
         return 'lfsr'
 
     def parse_args(self, args):
-        args_dict = Writer.parse_args(self, args)
+        args_dict = Writer.parse_args(args)
         fsr_args = super().parse_args(args)
         taps = self.parse_taps(args_dict.get('taps', '15,14,13,12'))
         return dict(
@@ -49,7 +55,8 @@ class LFSR(FSR):
     def create_session(self, taps, init, limit):
         return LFSRSession(taps, init, limit)
 
-    def parse_taps(self, s):
+    @classmethod
+    def parse_taps(cls, s):
         for parser_t in parsers:
             parser = parser_t()
             try:
@@ -58,7 +65,7 @@ class LFSR(FSR):
                 continue
             else:
                 logging.info('feedback poly: {}'.format(
-                    self.feedback_poly(taps)
+                    cls.feedback_poly(taps)
                 ))
                 return sorted(taps, reverse=True)
         raise TapParsingError('Failed to parse taps input.')

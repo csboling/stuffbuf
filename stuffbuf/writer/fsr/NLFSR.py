@@ -27,7 +27,7 @@ class NLFSR(FSR):
         return 'nlfsr'
 
     def parse_args(self, args):
-        args_dict = Writer.parse_args(self, args)
+        args_dict = Writer.parse_args(args)
         fsr_args = super().parse_args(args)
         return dict(
             feedback=self.parse_feedback(
