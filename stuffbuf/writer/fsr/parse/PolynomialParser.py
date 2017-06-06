@@ -17,8 +17,7 @@ class PolynomialParser(TapParser):
             gf = trunc(poly, 2)
             self.screen_polys(gf, meta)
             logging.info('input poly [ℤ]: {}'.format(poly))
-            logging.info('input poly [truncated]: {}'.format(gf))
-            return self.coeffs_to_taps((gf - 1).all_coeffs())
+            return self.coeffs_to_taps(gf.all_coeffs()[:-1])
 
     @staticmethod
     def screen_polys(poly, meta):

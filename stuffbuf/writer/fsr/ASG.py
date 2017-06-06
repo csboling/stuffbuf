@@ -64,9 +64,11 @@ class ASG(FSR):
                 LFSR.parse_taps(taps)
                 for taps in args_dict.get(
                     'taps',
-                    'x**16 + x**15 + x**14 + x**13 + 1,'
-                    'x**15 + x**14 + 1,'
-                    'x**14 + x**13 + x**3 + x**2 + 1'
+                    ','.join([
+                        'x**16 + 1',
+                        '(x**15 + 1)*(x**14 - 1)',
+                        '(x**14 + 1)*(x**13 - 1)*(x**12 + 1)',
+                    ])
                 ).split(',')
             ),
             (

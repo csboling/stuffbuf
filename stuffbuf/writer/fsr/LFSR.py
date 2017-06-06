@@ -17,7 +17,10 @@ class LFSRSession(FSRSession):
     def __init__(self, taps, *args, **kwargs):
         super().__init__(*args, **kwargs)
         print(taps)
-        self.tap_mask = reduce(operator.or_, map(lambda b: 1 << (b - 1), taps))
+        self.tap_mask = reduce(
+            operator.or_,
+            map(lambda b: 1 << abs(b - 1), taps)
+        )
         logging.info('taps: {} == 0x{:x}'.format(taps, self.tap_mask))
 
         self.bytedepth = int(math.ceil(taps[0] / 8))

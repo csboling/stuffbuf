@@ -11,4 +11,4 @@ class IntParser(TapParser):
             raise TapParsingError
         else:
             bin_taps = bin(taps_int)[2:]
-            return self.coeffs_to_taps(map(int, bin_taps))
+            return self.coeffs_to_taps(list(map(int, bin_taps)))
