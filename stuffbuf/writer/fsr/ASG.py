@@ -22,14 +22,14 @@ class ASGSession(FSRSession):
         ]
         n = 2**(len(specs) - 1)
         m = 1
-        while n >= m:
+        while n > m:
             m += 1
             n /= 2
         self.dom_reg_count = math.floor(n)
         self.max_reg_mask = 2**(len(self.regs) - self.dom_reg_count) - 1
         self.reg_ctxs = [self.RegCtx(reg, reg.run()) for reg in self.regs]
         self.dom_regs = self.reg_ctxs[: self.dom_reg_count]
-        self.sub_regs = self.reg_ctxs[self.dom_reg_count:]
+        self.sub_regs = self.reg_ctxs[self.dom_reg_count - 1:]
 
         logging.info('{} dominant regs'.format(self.dom_reg_count))
 
@@ -39,7 +39,6 @@ class ASGSession(FSRSession):
 
     def step(self, reg):
         control_state = [self.get_state(ctx) for ctx in self.dom_regs]
-        # print(control_state)
         control_bits = [
             ctx.reg.feedback(control_state[i])
             for i, ctx in enumerate(self.dom_regs)
@@ -65,8 +64,13 @@ class ASG(FSR):
                 for taps in args_dict.get(
                     'taps',
                     ','.join([
-                        'x**16 + 1',
+                        'x**4 + x**2 + 1',
+                        '(x**13 + 1)*(x**12 - 1)*(x**11 + 1)*(x**10 - 1)',
+                        'x**5 + x**3 + 1',
+                        '(x**14 + 1)*(x**13 - 1)*(x**12 + 1)',
+                        'x**5 + x**3 + 1',
                         '(x**15 + 1)*(x**14 - 1)',
+                        'x**5 + x**3 + 1',
                         '(x**14 + 1)*(x**13 - 1)*(x**12 + 1)',
                     ])
                 ).split(',')

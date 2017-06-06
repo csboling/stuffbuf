@@ -36,30 +36,34 @@ class NLFSR(FSR):
             **fsr_args
         )
 
+    @classmethod
     def parse_feedback(self, s):
         logging.info('feedback formula: {}'.format(s))
         exp = ast.parse(s, mode='eval')
         self.order = 0
         return self.eval(exp.body)
 
-    def eval(self, exp):
+    @classmethod
+    def eval(cls, exp):
         if isinstance(exp, ast.Num):
-            self.order = max(self.order, exp.n)
-            return lambda bits: self.get_bit(bits, exp.n)
+            cls.order = max(cls.order, exp.n)
+            return lambda bits: cls.get_bit(bits, exp.n)
         elif isinstance(exp, ast.UnaryOp):
-            op = self.get_op(exp.op)
-            operand = self.eval(exp.operand)
+            op = cls.get_op(exp.op)
+            operand = cls.eval(exp.operand)
             return lambda bits: op(operand(bits))
         elif isinstance(exp, ast.BinOp):
-            op = self.get_op(exp.op)
-            left = self.eval(exp.left)
-            right = self.eval(exp.right)
+            op = cls.get_op(exp.op)
+            left = cls.eval(exp.left)
+            right = cls.eval(exp.right)
             return lambda bits: op(left(bits), right(bits))
 
-    def get_bit(self, bits, exponent):
+    @classmethod
+    def get_bit(cls, bits, exponent):
         return bits[-(exponent - 1)]
 
-    def get_op(self, op):
+    @classmethod
+    def get_op(cls, op):
         if isinstance(op, ast.Invert):
             return lambda b: 1 - b
         elif isinstance(op, ast.BitOr):
