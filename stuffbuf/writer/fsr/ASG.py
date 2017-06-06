@@ -1,4 +1,5 @@
 from collections import namedtuple
+from functools import reduce
 import logging
 import math
 
@@ -20,13 +21,12 @@ class ASGSession(FSRSession):
             LFSRSession(taps=taps, init=init, *args, **kwargs)
             for taps, init in specs
         ]
-        n = 2**(len(specs) - 1)
-        m = 1
-        while n > m:
+        logging.info('{} regs total'.format(len(self.regs)))
+        m = 0
+        while 2**m < (len(specs) - m):
             m += 1
-            n /= 2
-        self.dom_reg_count = math.floor(n)
-        self.max_reg_mask = 2**(len(self.regs) - self.dom_reg_count) - 1
+        self.dom_reg_count = m
+        self.sub_reg_count = len(self.regs) - m
         self.reg_ctxs = [self.RegCtx(reg, reg.run()) for reg in self.regs]
         self.dom_regs = self.reg_ctxs[: self.dom_reg_count]
         self.sub_regs = self.reg_ctxs[self.dom_reg_count - 1:]
@@ -44,10 +44,18 @@ class ASGSession(FSRSession):
             for i, ctx in enumerate(self.dom_regs)
         ]
         target_index = int(''.join(map(str, control_bits)), 2)
-        target = self.sub_regs[target_index & self.max_reg_mask]
+        target = self.sub_regs[target_index % self.sub_reg_count]
         target_state = self.get_state(target)
         target_out = target.reg.feedback(target_state)
-        return target_state ^ control_state[0]
+        return self.feedback(target_state, control_state, control_bits)
+
+    def feedback(self, target, controls, control_bits):
+        # print(control_bits)
+        return target ^ reduce(
+            lambda x, y: x & ~y,
+            (control for (control, bit) in zip(controls, control_bits) if bit),
+            1
+        )
 
 
 class ASG(FSR):
@@ -64,14 +72,13 @@ class ASG(FSR):
                 for taps in args_dict.get(
                     'taps',
                     ','.join([
+                        'x**16 + x**13 + x**10 + x**7 + x**4 + x + 1',
+                        'x**15 + x**12 + x**9  + x**6 + x + 1',
+                        'x**14 + x**11 + x**8  + x**5 + 1',
                         'x**4 + x**2 + 1',
-                        '(x**13 + 1)*(x**12 - 1)*(x**11 + 1)*(x**10 - 1)',
                         'x**5 + x**3 + 1',
-                        '(x**14 + 1)*(x**13 - 1)*(x**12 + 1)',
                         'x**5 + x**3 + 1',
-                        '(x**15 + 1)*(x**14 - 1)',
                         'x**5 + x**3 + 1',
-                        '(x**14 + 1)*(x**13 - 1)*(x**12 + 1)',
                     ])
                 ).split(',')
             ),
@@ -79,10 +86,11 @@ class ASG(FSR):
                 int(init, 16)
                 for init in args_dict.get(
                     'init',
-                    '0x2492,0x4210,0x8102'
+                    '0x2492,0x4210,0x8102,0xdead,0xbeef,0xcafe,0xc0de'
                 ).split(',')
             ),
         ))
+        print(specs)
         limit = int(args_dict.get('limit', '88200'))
         return dict(specs=specs, limit=limit, init=0)
 
