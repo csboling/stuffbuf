@@ -17,6 +17,7 @@ class LFSRSession(FSRSession):
     def __init__(self, taps, *args, **kwargs):
         super().__init__(*args, **kwargs)
         print(taps)
+        self.taps = taps
         self.tap_mask = reduce(
             operator.or_,
             map(lambda b: 1 << abs(b - 1), taps)
