@@ -1,36 +1,30 @@
 import logging
 import operator
-from itertools import repeat
 
-from sympy import Dummy, fps, sequence, Symbol, sympify, oo
-from sympy.abc import w
-from sympy.polys import polytools
-from sympy.series.formal import FormalPowerSeries
+from sympy import sympify, solve
+from sympy.abc import w, z
+from sympy.functions import Abs
+from sympy.series.residues import residue
 
-from stuffbuf.parse.exceptions import ParsingError
+# from stuffbuf.parse.exceptions import ParsingError
 
 
 class ZTransformParser:
 
     def parse(self, s, depth=16):
-        e = sympify(s)
-        if e.is_polynomial(w):
-            poly = polytools.poly(e)
-        else:
-            series = fps(e)
-            poly = polytools.poly(series.polynomial(depth))
+        poly = sympify(s).series(1 / z, 0, depth + 1).removeO()
+        logging.info('Laurent series: {}'.format(poly))
 
-        logging.info('z-transform in w = 1 / z: {}'.format(poly))
-        if all(pred() for pred in (
-            lambda: isinstance(poly, polytools.Poly),
-            lambda: poly == poly.diff().integrate(),
-            lambda: w in poly.free_symbols,
-        )):
-            coeffs = [int(c) for c in poly.coeffs()]
-            return lambda memory: sum(map(operator.mul, coeffs, memory))
-        else:
-            raise ParsingError(
-                '''' please use the symbol w = 1 / z and provide an expression which
-has only negative Laurent coefficients, e.g. exp(w) - 1
-(corresponding to a causal z-transform). '''
+        inv_poly = poly.subs(z, 1 / w)
+        poles = solve(inv_poly, w)
+
+        coeffs = [
+            sum(
+                int(residue(poly * z**(k - 1), z, pole))
+                for pole in poles if Abs(pole) < 1
             )
+            for k in range(depth, 0, -1)
+        ]
+        logging.info('recurrence coeffs: {}'.format(coeffs))
+
+        return lambda memory: sum(map(operator.mul, coeffs, memory))

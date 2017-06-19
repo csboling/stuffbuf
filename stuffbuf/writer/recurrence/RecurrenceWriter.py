@@ -18,7 +18,7 @@ class RecurrenceSession:
 
     def run(self):
         reg = self.init
-        memory = deque([], self.memdepth)
+        memory = deque([0] * self.memdepth, self.memdepth)
         for _ in range(self.limit):
             yield (reg & self.mod_mask).to_bytes(
                 self.bytedepth, byteorder='big'
