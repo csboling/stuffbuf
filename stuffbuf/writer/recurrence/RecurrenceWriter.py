@@ -35,8 +35,11 @@ class RecurrenceWriter(Source):
 
     def parse_args(self, args):
         args_dict = super().parse_args(args)
-        exp = ZTransformParser().parse(args_dict.get('exp', 'w**2 + w'))
         memdepth = int(args_dict.get('memdepth', '16'))
+        exp = ZTransformParser().parse(
+            args_dict.get('exp', 'w**2 + w'),
+            depth=memdepth
+        )
         init = int(args_dict.get('init', '0xffff'), 16)
         limit = int(args_dict.get('limit', '88200'))
 
