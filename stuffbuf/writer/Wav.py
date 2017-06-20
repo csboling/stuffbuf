@@ -11,5 +11,5 @@ class WavWriter(Writer):
 
     def write(self, source, target):
         w = wave.open(target, mode='wb')
-        w.setparams((2, 2, 44100, 0, 'NONE', 'not compressed'))
+        w.setparams((1, 2, 44100, 0, 'NONE', 'not compressed'))
         w.writeframes(source.read())
