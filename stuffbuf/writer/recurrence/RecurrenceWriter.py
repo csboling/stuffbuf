@@ -20,6 +20,7 @@ class RecurrenceSession:
         self.bytedepth = bytedepth
         self.memdepth = memdepth
         self.mod_mask = 2**(8 * self.bytedepth) - 1
+        logging.info('depth {}, mask {}'.format(self.bytedepth, self.mod_mask))
 
     def condition(self, memory):
         return [float(re(sympify(x))) for x in memory]
@@ -32,13 +33,13 @@ class RecurrenceSession:
         half_scale = self.mod_mask // 2
         for _ in range(self.limit):
             y = self.exp(memory)
-            sample = (int(y * self.gain()) & self.mod_mask) - half_scale
-            logging.info(
+            sample = (int(y) & self.mod_mask) - half_scale
+            logging.debug(
                 (
                     '{:0' + str(self.bytedepth * 2) + 'x}'
                     +
-                    ' <- {} = coeffs .* {}'
-                ).format(sample, y, memory)
+                    ' <- {} = step({})'
+                ).format(sample, y, list(memory))
             )
             yield sample.to_bytes(
                 self.bytedepth,
@@ -57,12 +58,12 @@ class RecurrenceWriter(Source):
     def parse_args(self, args):
         args_dict = super().parse_args(args)
         memdepth = int(args_dict.get('memdepth', '16'))
-        exp = ZTransformParser().parse(
-            args_dict.get('exp', 'z**-2 + z**-1'),
-            depth=memdepth
-        )
+        # exp = ZTransformParser().parse(
+        #     args_dict.get('exp', 'z**-2 + z**-1'),
+        #     depth=memdepth
+        # )
         rec = RecurrenceParser().parse(
-            args_dict.get('rec', 'y(n-1) + y(n-2)'),
+            args_dict.get('rec', 'x(n-1) + x(n-2)'),
             depth=memdepth
         )
         init = ast.literal_eval(args_dict.get('init', str([0] * 16)))
@@ -70,7 +71,8 @@ class RecurrenceWriter(Source):
         bytedepth = int(args_dict.get('bytedepth', '4'))
 
         return dict(
-            exp=exp,
+            # exp=exp,
+            exp=rec,
             init=init,
             limit=limit,
             memdepth=memdepth,
