@@ -7,7 +7,7 @@ from stuffbuf.writer.Wav import WavWriter
 
 from stuffbuf.writer.Source import Source
 from stuffbuf.writer.fsr import ASG, LFSR, NLFSR, Xorshift
-from stuffbuf.writer.recurrence import RecurrenceWriter
+from stuffbuf.writer.recurrence import RecurrenceWriter, ZTransformWriter
 
 try:
     from stuffbuf.writer.DSP import ConvolveWriter
@@ -30,4 +30,5 @@ __all__ = [
     LFSR,
     NLFSR,
     Xorshift,
+    ZTransformWriter,
 ]

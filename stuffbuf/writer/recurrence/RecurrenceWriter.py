@@ -6,7 +6,6 @@ import struct
 from sympy import re, sympify
 
 from stuffbuf.writer.Source import Source
-from stuffbuf.parse.ztransform import ZTransformParser
 from stuffbuf.parse.recurrence import RecurrenceParser
 
 
@@ -33,7 +32,8 @@ class RecurrenceSession:
         half_scale = self.mod_mask // 2
         for _ in range(self.limit):
             y = self.exp(memory)
-            sample = (int(y) & self.mod_mask) - half_scale
+            sample = (int(y * self.gain()) & self.mod_mask) - half_scale
+            # sample = (int(y) & self.mod_mask) - half_scale
             logging.debug(
                 (
                     '{:0' + str(self.bytedepth * 2) + 'x}'
@@ -58,14 +58,9 @@ class RecurrenceWriter(Source):
     def parse_args(self, args):
         args_dict = super().parse_args(args)
         memdepth = int(args_dict.get('memdepth', '16'))
-        # exp = ZTransformParser().parse(
-        #     args_dict.get('exp', 'z**-2 + z**-1'),
-        #     depth=memdepth
-        # )
-        rec = RecurrenceParser().parse(
-            args_dict.get('rec', 'x(n-1) + x(n-2)'),
-            depth=memdepth
-        )
+
+        rec = self.parser().parse(args_dict.get('exp', '0'), depth=memdepth)
+
         init = ast.literal_eval(args_dict.get('init', str([0] * 16)))
         limit = int(args_dict.get('limit', '88200'))
         bytedepth = int(args_dict.get('bytedepth', '4'))
@@ -78,6 +73,9 @@ class RecurrenceWriter(Source):
             memdepth=memdepth,
             bytedepth=bytedepth
         )
+
+    def parser(self):
+        return RecurrenceParser()
 
     def create_session(self, *args, **kwargs):
         return RecurrenceSession(*args, **kwargs)

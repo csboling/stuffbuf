@@ -18,13 +18,15 @@ class RecurrenceRunner:
             x_impl_fn
         )
         self.exp = exp.subs(x, x_impl)
+        logging.info('expression: {}'.format(self.exp))
 
     def __call__(self, memory):
         self.memory = memory
         e = self.exp.subs(n, self.time)
         lam_x = lambdify((), e)
         self.time += 1
-        return lam_x()
+        ret = lam_x()
+        return ret
 
 
 class RecurrenceParser:
